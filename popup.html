@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>IDA Extended</title>
+        <link rel="stylesheet" href="./styles/popup.css">
+    </head>
+    <body>
+        <h1 style="margin-bottom: 5px;">IDA</h1>
+        <div id="body">
+            <h3 style="margin-bottom: 5px;">Ustawienia</h3>
+            <div id="navbar-header" class="flex-row">
+                <button id="_main" class="nav button selected">Główne</button>
+                <button id="_custom" class="nav button">Filtry</button>
+                <button id="_attrs" class="nav button">Atrybuty</button>
+                <button id="_funcs" class="nav button">Wł/wył</button>
+            </div>
+            <div id="content">
+                <div id="content-list" class="flex-col">
+                    <!--DYNAMIC-->
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./scripts/popup.js"></script>
+    </body>
+</html>

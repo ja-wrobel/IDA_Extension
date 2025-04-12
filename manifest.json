@@ -1,0 +1,46 @@
+{
+    "name": "IDA Extension",
+    "version": "1.0",
+    "manifest_version": 3,
+    "description": "Extension description",
+    "author": "Jakub Wróbel",
+    "permissions": [
+        "storage",
+        "scripting",
+        "tabs"
+    ],
+    "host_permissions": [
+        "<ida_url>"
+    ], 
+    "content_scripts": [
+        {
+            "matches": [
+                "<ida_url>"
+            ],
+            "js": ["./scripts/contentScript.js"],
+            "runs_at": "document_start"
+        }
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "web_accessible_resources": [
+        {
+          "resources": [
+            "scripts/injected/mainIDA.js",
+            "scripts/injected/EventManager.js",
+            "scripts/injected/Annotations.js",
+            "scripts/injected/Tooltip.js",
+            "scripts/injected/TooltipSize.js",
+            "scripts/injected/SessionResourceHandler.js",
+            "scripts/injected/EventListeners.js",
+            "scripts/injected/KonvaMaths.js"
+        ],
+          "matches": ["<all_urls>"]
+        }
+    ],
+    "action": {
+        "default_title": "IDA Extension",
+        "default_popup": "popup.html"
+    }
+}
