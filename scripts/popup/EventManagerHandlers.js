@@ -2,7 +2,6 @@ class EventManagerHandlers {
     _init_(settings, renders) {
         this.settings = settings;
         this.renders = renders;
-        this.informAboutDuplicatedShortcuts();
     }
     
     handleInputKeyChange(e, targetSetting) {
@@ -129,16 +128,6 @@ class EventManagerHandlers {
             if (!element) return;
             element.addEventListener(event, callback, { signal });
         });
-    }
-
-    informAboutDuplicatedShortcuts() {
-        if (this.settings._getDuplicatedShortcuts().length === 0) {
-            return;
-        }
-        const message = this.settings._getDuplicatedShortcuts().map((shortcut) => {
-            return `${shortcut.alt ? "Alt + " : ""}"${shortcut.key.toUpperCase()}"`;
-        }).join(", ");
-        alert(`Następujące skróty są zduplikowane: ${message}`);
     }
 }
 

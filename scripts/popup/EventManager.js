@@ -116,7 +116,6 @@ class EventManager extends EventManagerHandlers {
             this.settings.updateExistingDuplicates();
             this.renders.updateDOM(scope);
             this.setEventListeners(scope);
-            this.informAboutDuplicatedShortcuts();
         }, signal);
         this.addEventListeners("#nav-left", "click", () => {
             const groupsField = document.getElementById("dynamic-groups");
@@ -142,7 +141,6 @@ class EventManager extends EventManagerHandlers {
             this.settings.updateExistingDuplicates();
             this.renders.updateDOM(scope);
             this.setEventListeners(scope);
-            this.informAboutDuplicatedShortcuts();
         }, signal);
         this.addEventListeners("#new-group", "click", () => {
             const groupName = this.getNewFiltersGroupName(

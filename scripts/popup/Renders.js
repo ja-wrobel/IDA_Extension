@@ -26,6 +26,7 @@ class Renders {
             }
             this.settings.searchForNewDuplicates(input.value, siblingCheckbox.checked);
         });
+        this.alertAboutDuplicatedShortcuts();
         this.highlightDuplicatedKeys();
     }
 
@@ -218,6 +219,16 @@ class Renders {
             parent.nextElementSibling.classList.remove("hide-r");
             parent.classList.add("hide-l");
         }
+    }
+
+    alertAboutDuplicatedShortcuts() {
+        if (this.settings._getDuplicatedShortcuts().length === 0) {
+            return;
+        }
+        const message = this.settings._getDuplicatedShortcuts().map((shortcut) => {
+            return `${shortcut.alt ? "Alt + " : ""}"${shortcut.key.toUpperCase()}"`;
+        }).join(", ");
+        alert(`Następujące skróty są zduplikowane: ${message}`);
     }
 
     highlightDuplicatedKeys() {

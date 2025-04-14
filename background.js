@@ -12,7 +12,7 @@ const InitialSettings = {
         mode: {key: "q", alt: false},
         visiblity: {key: "x", alt: false},
         ettiq: {key: "c", alt: false},
-        displayTTipPeriod: {key: "1"},
+        displayTTipPeriod: {key: "0"},
         tooltipSize: {key: "medium"},
         authToken: {key: ""}
     },

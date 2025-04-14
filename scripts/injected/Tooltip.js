@@ -64,11 +64,11 @@ class Tooltip extends TooltipSize {
         } 
         else if (this.getStagePosition().y > (this.shape.y - 30)) {
             const bottomTooltipPosition = this.shape.y + this.shape.height + 20;
-            const bottomLimit = bottomTooltipPosition + (this.tooltipSize.height * 0.75);
-            if (this.getLimiter().y > bottomLimit) {
-                this.tooltipGroup.y(bottomTooltipPosition); // tooltip on bootom of BB
+            const tooltipPositionOnTheMiddleOfShape = this.shape.y + (this.shape.height / 2) - (this.tooltipSize.height / 2);
+            if (this.getStagePosition().y < tooltipPositionOnTheMiddleOfShape) {
+                this.tooltipGroup.y(tooltipPositionOnTheMiddleOfShape); // tooltip on the middle of shape
             } else {
-                this.tooltipGroup.y((this.shape.y + (this.shape.height / 2)) - (this.tooltipSize.height / 2)); // tooltip on the middle of shape
+                this.tooltipGroup.y(bottomTooltipPosition); // tooltip on bootom of BB
             }
         }
     }
