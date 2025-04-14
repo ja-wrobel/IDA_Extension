@@ -80,7 +80,7 @@ class Tooltip extends TooltipSize {
             y: this.shape.y,
         });
         const tooltipBackground = new window.Konva.Rect({
-            fill: `${this.blobData.color}66`,
+            fill: `${this.blobData.color}8c`, // 8c = 55% opacity
             width: this.tooltipSize.width,
             height: this.tooltipSize.height,
             cornerRadius: 5,
