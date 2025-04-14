@@ -304,10 +304,15 @@ class SettingsStore {
             }
         }
         if (this.isValidProject === false) {
-            return duplicates.defaults;
+            if (duplicates.defaults === undefined) {
+                this.userSettings.duplicates[this._getSelectedGroupId()].defaults = [];
+                this.saveData();
+            }
+            return this.userSettings.duplicates[this._getSelectedGroupId()].defaults;
         }
         if (duplicates[this.currentProjectName] === undefined) {
             this.userSettings.duplicates[this._getSelectedGroupId()][this.currentProjectName] = [];
+            this.userSettings.duplicates[this._getSelectedGroupId()].defaults = [];
             this.saveData();
         }
         return this.userSettings.duplicates[this._getSelectedGroupId()][this.currentProjectName];
