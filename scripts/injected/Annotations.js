@@ -207,7 +207,7 @@ class Annotations {
             return;
         }
         const regexString = `^/api/projects/${projectName}$`;
-        if (requestURL.match(regexString) === true && XMLHttpRequest.response) {
+        if (requestURL.match(regexString) !== null && XMLHttpRequest.response) {
             this.setAttributeTypes(XMLHttpRequest.response);
             return;
         }

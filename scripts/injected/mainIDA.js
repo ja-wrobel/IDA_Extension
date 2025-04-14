@@ -195,13 +195,13 @@ import { EventListeners } from "./EventListeners.js";
             }
         }
         eventListeners.removeAll(["keydown", "keyup"], document);
-        session.deleteKnownBlobs();
         annotations.deleteAllAnnotations();
     }
 
     // EXE
     window.addEventListener("locationchange", () => {
         if (session.getFuncsUserSetting("isOff")) {
+            session.deleteKnownBlobs();
             cleanUp();
             return;
         }
