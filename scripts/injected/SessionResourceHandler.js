@@ -67,9 +67,9 @@ class SessionResourceHandler {
                 "authorization": this.authToken ? this.authToken : this.getMainUserSetting("authToken").key,
                 "origin": document.location.origin,
                 "priority": "u=1, i",
-                "sec-ch-ua": "\"Not(A:Brand\";v=\"99\", \"Microsoft Edge\";v=\"133\", \"Chromium\";v=\"133\"",
-                "sec-ch-ua-mobile": "?0",
-                "sec-ch-ua-platform": "\"Windows\"",
+                "sec-ch-ua": navigator.userAgentData?.brands?.map(brand => `${brand.brand};v="${brand.version}"`).join(", ") || navigator.userAgent,
+                "sec-ch-ua-mobile": navigator.userAgentData?.mobile ? "?1" : "?0",
+                "sec-ch-ua-platform": `"${navigator.userAgentData?.platform || "Windows"}"`,
                 "sec-fetch-dest": "empty",
                 "sec-fetch-mode": "cors",
                 "sec-fetch-site": "same-origin"
