@@ -80,6 +80,10 @@ class Renders {
             return;
         }
         for (const key of Object.keys(this.settings._getAttrsSettings())) {
+            if (this.settings._getAttrsSettings(key).type === "radio") {
+                this.renderAttributeRadioField(key, this.settings._getAttrsSettings(key));
+                continue;
+            }
             this.renderAttributeField(key, this.settings._getAttrsSettings(key));
         }
     }
@@ -116,32 +120,65 @@ class Renders {
         `;
     }
 
-    renderAttributeField(attrType, attrContents) {
+    renderAttributeRadioField(attrName, attrContents) {
         const attrsField = document.getElementById("dynamic-attributes");
-        if (attrContents.type === "text") {
+        const attrNameAsId = this.sanitizeForId(attrName);
+        attrsField.innerHTML += `
+            <div id="${attrNameAsId}" class="setting flex-col">
+                <p class="setting-title">${attrName}</p>
+            </div>
+        `;
+        for (const entry of attrContents.values) {
+            const nameAsId = this.sanitizeForId(entry.name);
+            const settingColumnField = document.getElementById(attrNameAsId);
+            settingColumnField.innerHTML += `
+                <div style="align-items: center" class="flex-row">
+                    <label class="setting-label" for="${nameAsId}">${entry.name}:</label>
+                    <input 
+                        class="setting-inp-key"
+                        id="${nameAsId}"
+                        type="text" 
+                        maxlength="1"
+                        data-name="${entry.name}"
+                        value="${entry.key}"
+                    >
+                    <input
+                        class="setting-checkbox"
+                        type="checkbox" 
+                        data-name="${entry.name}"
+                        ${entry.alt === true ? "checked" : ""}
+                    >
+                </div>
+            `;
+        }
+    }
+
+    renderAttributeField(attrName, attrContents) {
+        const attrsField = document.getElementById("dynamic-attributes");
+        if (attrContents.type === "text" || attrContents.type === "number") {
             attrsField.innerHTML += `
                 <div class="setting flex-col">
-                    <p class="setting-title">${attrType}</p>
+                    <p class="setting-title">${attrName}</p>
                     <div class="flex-row">
                         <input 
                             placeholder="Wartość"
                             class="setting-inp-val wide-inp" 
                             type="text" 
-                            data-name="${attrType}"
+                            data-name="${attrName}"
                             value="${attrContents.value}"
                         >
                         <input
                             placeholder="a"
                             class="setting-inp-key"
                             type="text"
-                            data-name="${attrType}"
+                            data-name="${attrName}"
                             value="${attrContents.key}"
                         >
                         <input
                             title="Alt"
                             class="setting-checkbox"
                             type="checkbox"
-                            data-name="${attrType}"
+                            data-name="${attrName}"
                             ${attrContents.alt === true ? "checked" : ""}
                         >
                     </div>
@@ -149,20 +186,20 @@ class Renders {
             `;
             return;
         }
-        const attrTypeAsId = this.sanitizeForId(attrType);
+        const attrNameAsId = this.sanitizeForId(attrName);
         attrsField.innerHTML += `
             <div class="setting">
-                <label class="setting-label" for="${attrTypeAsId}">${attrType}: 
+                <label class="setting-label" for="${attrNameAsId}">${attrName}: 
                     <input 
                         class="setting-inp-key" 
-                        data-name="${attrType}" 
-                        id="${attrTypeAsId}" 
+                        data-name="${attrName}" 
+                        id="${attrNameAsId}" 
                         maxlength="1" 
                         type="text" 
                         value="${attrContents.key}"
                     >
                 </label>
-                <input class="setting-checkbox" type="checkbox" data-name="${attrType}" ${attrContents.alt === true ? "checked" : ""}>
+                <input class="setting-checkbox" type="checkbox" data-name="${attrName}" ${attrContents.alt === true ? "checked" : ""}>
             </div>
         `;
     }

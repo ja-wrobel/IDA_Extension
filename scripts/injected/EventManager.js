@@ -2,6 +2,7 @@ import { SessionResourceHandler } from "./SessionResourceHandler.js";
 
 class EventManager {
     focusedShape = undefined;
+    focusedGroupOfShapes = undefined; //Konva.stages[0].children[3] determines group focus position with "Shift", with "v" i think i will have to track it manually
     rightAlt = false;
     lastSelectedClass = null;
     isKeyPressed = false;
@@ -106,8 +107,16 @@ class EventManager {
             }
         }
         for (const [key, entry] of Object.entries(this.session.getAttrsUserSetting())) {
-            if (this.isEventValid(this.session.getAttrsUserSetting(key), event)) { 
-                this.changeAttribute(entry.id, entry.type, entry.value);
+            if (entry.type === "radio") {
+                for (const radio of entry.values) {
+                    if (this.isEventValid(radio, event)) {
+                        this.changeAttribute(entry.type, radio.value, entry.id, radio.id); // here issue is
+                        return;
+                    }
+                }
+            }
+            if (this.isEventValid(entry, event)) { 
+                this.changeAttribute(entry.type, entry.value, entry.id); // here issue is
                 return;
             }
         }
@@ -225,14 +234,16 @@ class EventManager {
         }
     }
 
-    changeAttribute(index, inputType, value) {
+    changeAttribute(inputType, value, formIndex, radioIndex) {
         let input = document.querySelector("input");
         const inputVal = input.value;
         const targetId = this.focusedShape.attrs.id;
 
         this.clickElement('button[aria-label="objectsButton"]', document);
-        input.value = `${this.focusedShape._labelText} ${this.focusedShape._annotationOrdinalNumber}`;
-        input.dispatchEvent(new Event("input", { bubbles: true }));
+        if (value !== "--") { // not as it should be, here I should check whether many shapes are targeted or not
+            input.value = `${this.focusedShape._labelText} ${this.focusedShape._annotationOrdinalNumber}`;
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
 
         let parentForm = document.querySelector("attributes-dynamic-form > div > form");
         if (parentForm === null) {
@@ -243,19 +254,29 @@ class EventManager {
             if (parentForm === null) {
                 parentForm = document.querySelector("attributes-dynamic-form > div > form");
             }
-            const targetAttributeForm = parentForm.children[index];
+            const targetAttributeForm = parentForm.children[formIndex];
                 
             if (inputType === "checkbox") {
                 this.clickElement("input", targetAttributeForm);
-            } else if (inputType === "input"){
+            }
+            else if (inputType === "radio") {
+                const radioGroup = targetAttributeForm.querySelector("mat-radio-group");
+                this.clickElement("input", radioGroup.children[radioIndex]);
+            } 
+            else if (inputType === "input" || inputType === "text" || inputType === "number") {
                 const attrInput = targetAttributeForm.querySelector("input");
+                if (value === "--") {
+                    attrInput.focus();
+                    return;
+                }
                 if (attrInput.value === value) {
                     attrInput.value = "";
                 } else {
                     attrInput.value = value;
                 }
                 attrInput.dispatchEvent(new Event("input", { bubbles: true }));
-            } else {
+            } 
+            else {
                 console.error("Unhandled attribute's input type: ", inputType);
                 return;
             }

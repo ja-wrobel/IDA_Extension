@@ -244,6 +244,23 @@ class SessionResourceHandler {
             if (this.userSettings._attrs[projectName][attributeName]) {
                 continue;
             }
+            if (attributeType === "radio") {
+                this.userSettings._attrs[projectName][attributeName] = {
+                    id: i, 
+                    type: attributeType,
+                    values: []
+                };
+                for (let j = 0; j < attributesObj[i].values.length; ++j) {
+                    const name = attributesObj[i].values[j];
+                    this.userSettings._attrs[projectName][attributeName].values.push({
+                        id: j,
+                        name: name,
+                        key: "",
+                        alt: false
+                    });
+                }
+                continue;
+            }
             this.userSettings._attrs[projectName][attributeName] = {
                 id: i,
                 type: attributeType,

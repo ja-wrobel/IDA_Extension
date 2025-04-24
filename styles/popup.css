@@ -119,7 +119,8 @@ button {
         user-select: none;
     }
     
-    & input[type="text"] {
+    & input[type="text"],
+    input[type="number"] {
         color:rgb(220, 220, 220);
         background-color: rgba(227, 227, 227, 0.2);
         padding: 3px;
