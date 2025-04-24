@@ -83,20 +83,6 @@ const dynamicContent = {
                 <button type="button" class="manage-btn wide-btn" name="tooltipSize" id="big">Duże</button>
             </div>
         </div>
-        <div class="setting">
-            <label title="Powinien ustawić się automatycznie ale jeśli wyrzuca z IDA to trzeba wyłączyć rozszerzenie w 'Wł/wył' i ustawić ręcznie" 
-                class="setting-label" 
-                for="auth-token"
-            >Token Autoryzacyjny: 
-                <input 
-                    title='PPM na stronie -> "Zbadaj" lub "Wykonaj inspekcję" -> "Network" -> dowolne zapytanie o typie XHR -> "Headers" -> kopiuj wartość "Authorization"'
-                    class="setting-inp-key wide-inp" 
-                    name="authToken"
-                    id="auth-token" 
-                    type="text"
-                >
-            </label>
-        </div>
     `,
     _custom: `
         <div class="flex-row custom-filter-groups">
