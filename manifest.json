@@ -37,7 +37,8 @@
             "scripts/injected/TooltipSize.js",
             "scripts/injected/SessionResourceHandler.js",
             "scripts/injected/EventListeners.js",
-            "scripts/injected/KonvaMaths.js"
+            "scripts/injected/KonvaMaths.js",
+            "scripts/injected/CryptoManager.js"
         ],
           "matches": ["<all_urls>"]
         }

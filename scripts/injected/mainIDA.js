@@ -9,9 +9,22 @@ import { EventListeners } from "./EventListeners.js";
     const session = new SessionResourceHandler();
 
     window.postMessage("GET_SETTINGS");
+    window.postMessage("GET_AUTH_TOKEN");
     window.addEventListener("message", (e) => {
         if (e.data.type === "SETTINGS") {
             session.setUserSettings(e.data.settings);
+            return;
+        }
+        if (e.data.type === "ENCRYPTION_KEY" && e.data.key !== null) {
+            session.setEncryptionKey(e.data.key);
+            return;
+        }
+        if (e.data.type === "AUTH_TOKEN" && e.data.token !== null) {
+            session.setAuthToken(e.data.token, true);
+            if (e.data.iv !== null) {
+                session.setIV(e.data.iv);
+            }
+            return;
         }
     });
 
@@ -38,7 +51,7 @@ import { EventListeners } from "./EventListeners.js";
             }
             if (requestMethod === "POST" && (this.status === 200 || this.status === 202)){
                 if (this.status === 200 && this.getResponseHeader("Authorization") !== null) {
-                    session.setAuthToken(this.getResponseHeader("Authorization"));
+                    session.setAuthToken(this.getResponseHeader("Authorization"), false);
                     return;
                 }
             }

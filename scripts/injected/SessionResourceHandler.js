@@ -1,5 +1,8 @@
-class SessionResourceHandler {
+import { CryptoManager } from "./CryptoManager.js";
+
+class SessionResourceHandler extends CryptoManager {
     constructor() {
+        super();
         this.authToken = null;
         this.userSettings = {};
         this.knownClassBlobs = {};
@@ -40,14 +43,20 @@ class SessionResourceHandler {
         return this.userSettings.reservedKeys;
     }
 
-    setAuthToken(token) {
-        const authSettingRef = this.getMainUserSetting("authToken");
-        if (!token || token === "" || !authSettingRef) {
+    async setAuthToken(token, isEncrypted = false) {
+        if (typeof token !== "string" || token.length < 1) {
+            console.error("Invalid token provided.");
             return;
         }
-        this.authToken = token;
-        authSettingRef.key = token;
-        window.postMessage({type: "UPDATE_SETTINGS", settings: this.userSettings});
+        if (isEncrypted === false) {
+            this.authToken = token;
+            const {data, iv} = await this.encryptData(token);
+            window.postMessage({type: "UPDATE_AUTH_TOKEN", token: data, iv: iv});
+        }
+        else {
+            const decryptedToken = await this.decryptData(token);
+            this.authToken = decryptedToken;
+        }
     }
 
     setLastInterceptedBlob(blob) {
@@ -64,7 +73,7 @@ class SessionResourceHandler {
             "headers": {
                 "accept": "application/json, text/plain, */*",
                 "accept-language": "pl,en;q=0.9,en-GB;q=0.8,en-US;q=0.7",
-                "authorization": this.authToken ? this.authToken : this.getMainUserSetting("authToken").key,
+                "authorization": this.authToken ? this.authToken : "",
                 "origin": document.location.origin,
                 "priority": "u=1, i",
                 "sec-ch-ua": navigator.userAgentData?.brands?.map(brand => `${brand.brand};v="${brand.version}"`).join(", ") || navigator.userAgent,
@@ -100,7 +109,7 @@ class SessionResourceHandler {
     refreshAuthToken() {
         this.fetchWithRetry(`${document.location.origin}/api/tokens/refresh_token`, this.getHeadersForMethod("POST"))
             .then((response) => response.headers)
-            .then((headers) => this.setAuthToken(headers.get("Authorization")));
+            .then((headers) => this.setAuthToken(headers.get("Authorization"), false));
     }
 
     waitForResources(annotations, i = 0) {
