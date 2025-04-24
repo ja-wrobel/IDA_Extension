@@ -4,6 +4,9 @@
     "manifest_version": 3,
     "description": "Extension description",
     "author": "Jakub Wróbel",
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self';"
+    },
     "permissions": [
         "storage",
         "scripting",
