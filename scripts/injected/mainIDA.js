@@ -9,21 +9,21 @@ import { EventListeners } from "./EventListeners.js";
     const session = new SessionResourceHandler();
 
     window.postMessage("GET_SETTINGS");
+    window.postMessage("GET_ID");
     window.postMessage("GET_AUTH_TOKEN");
     window.addEventListener("message", (e) => {
         if (e.data.type === "SETTINGS") {
             session.setUserSettings(e.data.settings);
             return;
         }
-        if (e.data.type === "ENCRYPTION_KEY" && e.data.key !== null) {
-            session.setEncryptionKey(e.data.key);
+        if (e.data.type === "EXT_ID" && e.data.id !== null) {
+            session.setID(e.data.id);
             return;
         }
         if (e.data.type === "AUTH_TOKEN" && e.data.token !== null) {
+            session.setIV(e.data.iv);
+            session.setSalt(e.data.salt);
             session.setAuthToken(e.data.token, true);
-            if (e.data.iv !== null) {
-                session.setIV(e.data.iv);
-            }
             return;
         }
     });

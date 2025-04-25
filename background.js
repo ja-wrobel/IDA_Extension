@@ -59,40 +59,20 @@ chrome.storage.local.get("userSettings").then((data) => {
     }
 });
 
-async function generateKey() {
-    return await crypto.subtle.generateKey(
-        { name: "AES-GCM", length: 256 },
-        true,
-        ["encrypt", "decrypt"]
-    );
-}
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "GET_ENCRYPTION_KEY") {
-        (async () => {
-            const key = await chrome.storage.session.get("encryptionKey");
-            if (!key.encryptionKey) {
-                const newKey = await generateKey();
-                const exportedKey = await crypto.subtle.exportKey("jwk", newKey);
-                await chrome.storage.session.set({ encryptionKey: exportedKey });
-                sendResponse({ key: exportedKey });
-            } else {
-                sendResponse({ key: key.encryptionKey});
-            }
-        })();
-        return true;
-    } 
-    else if (message.type === "GET_AUTH_TOKEN") {
+    if (message.type === "GET_AUTH_TOKEN") {
         (async () => {
             const token = await chrome.storage.session.get("authToken");
             const iv = await chrome.storage.session.get("encryptionIV");
-            sendResponse({ token: token.authToken || null, iv: iv.encryptionIV || null });
+            const salt = await chrome.storage.session.get("salt");
+            sendResponse({ token: token.authToken || null, iv: iv.encryptionIV || null, salt: salt.salt || null });
         })();
         return true;
     } 
     else if (message.type === "UPDATE_AUTH_TOKEN") {
         chrome.storage.session.set({ authToken: message.token });
         chrome.storage.session.set({ encryptionIV: message.iv });
+        chrome.storage.session.set({ salt: message.salt });
     }
     return false;
 });

@@ -1,76 +1,104 @@
 class CryptoManager {
     constructor() {
+        this.encoder = new TextEncoder();
+        this.decoder = new TextDecoder();
         this.encryptionKey = null; 
         this.iv = null;
+        this.salt = null;
+        this.id = null;
+    }
+
+    async getKeyMaterial() {
+        if (this.id === null) {
+            return null;
+        }
+        return crypto.subtle.importKey(
+            'raw',
+            this.encoder.encode(this.id),
+            { name: 'PBKDF2' },
+            false,
+            ['deriveKey']
+        );
+    }
+
+    async deriveKey(salt) {
+        const keyMaterial = await this.getKeyMaterial();
+        if (!keyMaterial) { 
+            throw new Error("Unable to import key material.");
+        }
+        return crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt,
+                iterations: 100_000,
+                hash: 'SHA-256',
+            },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt', 'decrypt']
+        );
     }
 
     async encryptData(data) {
         this.iv = crypto.getRandomValues(new Uint8Array(12));
-        const encoder = new TextEncoder();
-        const encodedData = encoder.encode(data);
+        this.salt = crypto.getRandomValues(new Uint8Array(16));
+        const encodedData = this.encoder.encode(data);
+        const key = await this.deriveKey(this.salt);
 
-        if (!this.encryptionKey) {
-            await this.getEncryptionKey();
+        if (!key) {
+            throw new Error("Unable to derive key.");
         }
         const encryptedData = await crypto.subtle.encrypt(
             {
                 name: "AES-GCM",
                 iv: this.iv
             },
-            this.encryptionKey,
+            key,
             encodedData
         );
         return {
             data: this.arrayBufferToBase64(encryptedData),
-            iv: this.arrayBufferToBase64(this.iv)
+            iv: this.arrayBufferToBase64(this.iv),
+            salt: this.arrayBufferToBase64(this.salt)
         };
     }
 
     async decryptData(encryptedData) {
-        if (!this.encryptionKey) {
-            await this.getEncryptionKey();
+        if (!this.salt) {
+            throw new Error("Salt was not set.");
         }
         if (!this.iv) {
             throw new Error("IV was not set.");
         }
-        encryptedData = this.base64ToArrayBuffer(encryptedData);
+        const key = await this.deriveKey(this.salt);
+        if (!key) {
+            throw new Error("Unable to derive key.");
+        }
+        if (typeof encryptedData === 'string') {
+            encryptedData = this.base64ToArrayBuffer(encryptedData);
+        }
         const decryptedData = await crypto.subtle.decrypt(
             {
                 name: "AES-GCM",
                 iv: this.iv
             },
-            this.encryptionKey,
+            key,
             encryptedData
         );
-        const decoder = new TextDecoder();
-        return decoder.decode(decryptedData);
+        return this.decoder.decode(decryptedData);
     }
 
     setIV(iv) {
         this.iv = this.base64ToArrayBuffer(iv);
     }
 
-    async setEncryptionKey(key) {
-        const importedKey = await crypto.subtle.importKey(
-            "jwk",
-            key,
-            { name: "AES-GCM" },
-            true,
-            ["encrypt", "decrypt"]
-        );
-        this.encryptionKey = importedKey;
+    setSalt(salt) {
+        this.salt = this.base64ToArrayBuffer(salt);
     }
 
-    async getEncryptionKey() {
-        window.postMessage("GET_ENCRYPTION_KEY");
-        let attempts = 0;
-        while (!this.encryptionKey && attempts < 20) {
-            await new Promise(resolve => setTimeout(resolve, 100)); // wait for key to be set
-            attempts++;
-        }
-        if (!this.encryptionKey) {
-            throw new Error("Failed to retrieve encryption key after maximum attempts.");
-        }
+    setID(id) {
+        this.id = id;
     }
 
     arrayBufferToBase64(buffer) {

@@ -51,8 +51,8 @@ class SessionResourceHandler extends CryptoManager {
         if (isEncrypted === false) {
             try {
                 this.authToken = token;
-                const {data, iv} = await this.encryptData(token);
-                window.postMessage({type: "UPDATE_AUTH_TOKEN", token: data, iv: iv});
+                const {data, iv, salt} = await this.encryptData(token);
+                window.postMessage({type: "UPDATE_AUTH_TOKEN", token: data, iv: iv, salt: salt}, document.location.origin);
             } catch (error) {
                 console.error("Error encrypting token:", error);
             }
