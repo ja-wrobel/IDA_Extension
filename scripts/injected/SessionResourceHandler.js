@@ -49,13 +49,21 @@ class SessionResourceHandler extends CryptoManager {
             return;
         }
         if (isEncrypted === false) {
-            this.authToken = token;
-            const {data, iv} = await this.encryptData(token);
-            window.postMessage({type: "UPDATE_AUTH_TOKEN", token: data, iv: iv});
+            try {
+                this.authToken = token;
+                const {data, iv} = await this.encryptData(token);
+                window.postMessage({type: "UPDATE_AUTH_TOKEN", token: data, iv: iv});
+            } catch (error) {
+                console.error("Error encrypting token:", error);
+            }
         }
         else {
-            const decryptedToken = await this.decryptData(token);
-            this.authToken = decryptedToken;
+            try {
+                const decryptedToken = await this.decryptData(token);
+                this.authToken = decryptedToken;
+            } catch (error) {
+                console.error("Error decrypting token:", error);
+            }
         }
     }
 

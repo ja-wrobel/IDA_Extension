@@ -28,14 +28,12 @@ window.addEventListener("message", async (e) => {
         if (e.data === "GET_SETTINGS") {
             const settings = await chrome.storage.local.get("userSettings");
             window.postMessage({ type: "SETTINGS", settings: settings.userSettings });
-            return;
         }
         if (e.data === "GET_ENCRYPTION_KEY" && e.source === window && e.origin === location.origin) {
             chrome.runtime.sendMessage({ type: "GET_ENCRYPTION_KEY" }).then( (response) => {
                 const key = response?.key || null;
                 window.postMessage({ type: "ENCRYPTION_KEY", key: key}, location.origin);
             });
-            return;
         }
         if (e.data === "GET_AUTH_TOKEN" && e.source === window && e.origin === location.origin) {
             chrome.runtime.sendMessage({ type: "GET_AUTH_TOKEN" }).then( (response) => {
@@ -43,31 +41,20 @@ window.addEventListener("message", async (e) => {
                 const iv = response?.iv || null;
                 window.postMessage({ type: "AUTH_TOKEN", token: token, iv: iv }, location.origin);
             });
-            return;
         }
         if (e.data && e.data.type === "UPDATE_AUTH_TOKEN") {
             chrome.runtime.sendMessage({ type: "UPDATE_AUTH_TOKEN", token: e.data.token, iv: e.data.iv });
-            return;
         }
         if (e.data && e.data.type === "UPDATE_SETTINGS") {
-            await chrome.storage.local.set({ userSettings: e.data.settings });
-            return;
+            chrome.storage.local.set({ userSettings: e.data.settings });
         }
     } catch (error) {
         console.error("Error accessing chrome.storage:", error);
     }
 });
 
-chrome.storage.onChanged.addListener(async () => {
-    if (!chrome.runtime?.id) {
-        console.warn("Extension context invalidated.");
-        document.location.reload();
-        return;
-    }
-    try {
-        const settings = await chrome.storage.local.get("userSettings");
-        window.postMessage({type: "SETTINGS", settings: settings.userSettings});
-    } catch (error) {
-        console.error("Error posting updated chrome.storage:", error);
+chrome.storage.onChanged.addListener(async (changes, storageType) => {
+    if (storageType === "local" && changes.userSettings) {
+        window.postMessage({ type: "SETTINGS", settings: changes.userSettings.newValue });
     }
 });

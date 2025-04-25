@@ -47,8 +47,14 @@ const InitialSettings = {
     }
 };
 
-chrome.storage.local.get("userSettings").then((settings) => {
-    if (!settings._main) {
+chrome.storage.local.get("userSettings").then((data) => {
+    if (
+        data.userSettings === undefined ||
+        data.userSettings._main === undefined || 
+        data.userSettings._custom === undefined ||
+        data.userSettings._attrs === undefined ||
+        data.userSettings._funcs === undefined
+    ) {
         chrome.storage.local.set({ userSettings: InitialSettings });
     }
 });
