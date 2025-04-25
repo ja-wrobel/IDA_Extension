@@ -140,9 +140,12 @@ import { EventListeners } from "./EventListeners.js";
                     if (bool === false) {
                         return;
                     }
-                    const blobData = await session.getImageForShape(e.target.parent);
+                    let blobData = null;
+                    if (session.getFuncsUserSetting("showTTip") === true) {
+                        blobData = await session.getImageForShape(e.target.parent);
+                    }
                     const tooltip = new Tooltip(e, blobData, session.getMainUserSetting("tooltipSize").key);
-                    if (!tooltip.blobData || !tooltip.shape) {
+                    if (!tooltip.shape) {
                         return;
                     }
                     if (session.getFuncsUserSetting("showAttributes") === true) {

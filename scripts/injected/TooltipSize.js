@@ -3,16 +3,26 @@ import { KonvaMaths } from "./KonvaMaths.js";
 class TooltipSize extends KonvaMaths {
     constructor(blobData, tooltipSizeSetting) {
         super();
-        if (!blobData || this.isTooltipSizeSettingValid(tooltipSizeSetting) === false) {
+        if (this.isTooltipSizeSettingValid(tooltipSizeSetting) === false) {
             return;
         }
-        this.blobData = blobData;
-        this.tooltipSizeSetting = tooltipSizeSetting; 
-        this.isLargeBlob = (this.blobData.width + this.blobData.height) > 1500;
-        this.tooltipSize = {
-            width: this.getBaseTooltipSize("width"),
-            height: this.getBaseTooltipSize("height"),
-        };
+        if (blobData === null) {
+            this.blobData = null;
+            this.isLargeBlob = false;
+            this.tooltipSizeSetting = tooltipSizeSetting; 
+            this.tooltipSize = {
+                width: 0,
+                height: 0,
+            };
+        } else {
+            this.blobData = blobData;
+            this.isLargeBlob = (this.blobData.width + this.blobData.height) > 1500;
+            this.tooltipSizeSetting = tooltipSizeSetting; 
+            this.tooltipSize = {
+                width: this.getBaseTooltipSize("width"),
+                height: this.getBaseTooltipSize("height"),
+            };
+        }
     }
 
     isTooltipSizeSettingValid(settingVal) {

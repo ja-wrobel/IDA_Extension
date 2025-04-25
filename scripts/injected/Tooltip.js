@@ -4,10 +4,12 @@ class Tooltip extends TooltipSize {
     constructor(event, blobData, tooltipSizeSetting) {
         super(blobData, tooltipSizeSetting);
         this.setShape(event);
-        if (!this.shape || !this.blobData || !this.tooltipSize) {
+        if (!this.shape || !this.tooltipSize) {
             return;
         }
-        this.correctTooltipSize();
+        if (this.blobData !== null) {
+            this.correctTooltipSize();
+        }
         this.createTooltip();
     }
 
@@ -56,10 +58,15 @@ class Tooltip extends TooltipSize {
             }
         }
         if (this.shape.y + this.tooltipSize.height + 20 > this.getLimiter().y) {
-            const topTooltipPosition = this.shape.y - this.tooltipSize.height - 10;
-            const topLimit = topTooltipPosition + (this.tooltipSize.height * 0.5);
+            const topTooltipPositionWithBlob = this.shape.y - this.tooltipSize.height - 10;
+            const topTooltipPostitionWithoutBlob = this.shape.y - this.tooltipSize.height - 40;
+            const topLimit = topTooltipPositionWithBlob + (this.tooltipSize.height * 0.5);
             if (this.getStagePosition().y < topLimit) { // keep tooltip on bootom if it wouldn't be visible in at least about 50%
-                this.tooltipGroup.y(topTooltipPosition); // tooltip on top of BB
+                if (this.blobData === null) {
+                    this.tooltipGroup.y(topTooltipPostitionWithoutBlob); // tooltip on top of BB above label
+                } else {
+                    this.tooltipGroup.y(topTooltipPositionWithBlob); // tooltip on top of BB
+                }
             }
         } 
         else if (this.getStagePosition().y > (this.shape.y - 30)) {
@@ -80,24 +87,26 @@ class Tooltip extends TooltipSize {
             y: this.shape.y,
         });
         const tooltipBackground = new window.Konva.Rect({
-            fill: `${this.blobData.color}8c`, // 8c = 55% opacity
+            fill: this.blobData !== null ? `${this.blobData.color}8c` : "#FFFFFFBF", // 8c = 55% opacity
             width: this.tooltipSize.width,
             height: this.tooltipSize.height,
             cornerRadius: 5,
         });
-        const tooltipImage = new window.Konva.Image({
-            width: this.tooltipSize.width - 20,
-            height: this.tooltipSize.height - 20,
-            x: 10,
-            y: 10,
-        });
-        const imageObj = new Image();
-        imageObj.src = this.blobData.blob;
-        imageObj.onload = () => {
-            tooltipImage.image(imageObj);
-        };
         this.tooltipGroup.add(tooltipBackground);
-        this.tooltipGroup.add(tooltipImage);
+        if (this.blobData !== null) {
+            const tooltipImage = new window.Konva.Image({
+                width: this.tooltipSize.width - 20,
+                height: this.tooltipSize.height - 20,
+                x: 10,
+                y: 10,
+            });
+            const imageObj = new Image();
+            imageObj.src = this.blobData.blob;
+            imageObj.onload = () => {
+                tooltipImage.image(imageObj);
+            };
+            this.tooltipGroup.add(tooltipImage);
+        }
     }
 
     createTooltipText(attributes, showGrammage) {
@@ -112,20 +121,29 @@ class Tooltip extends TooltipSize {
             align: "center",
             padding: 5,
         }));
-        if (!textElements[0] || !this.tooltipSize.height || !this.tooltipSize.width) { 
+        if (!textElements[0]) { 
             return;
         }
         const [textElementsHeight, textElementsMaxWidth, maxWidthDiff] = this.adjustTooltipText(textElements);
-
-        const tooltipTextBackground = new window.Konva.Rect({
-            fill: "rgba(255, 255, 255, 0.75)", 
-            width: textElementsMaxWidth,
-            height: textElementsHeight, 
-            cornerRadius: 5,
-            y: this.tooltipSize.height,
-            x: textElementsMaxWidth > this.tooltipSize.width ? 0 - (maxWidthDiff / 2) : 0
-        });
-        this.tooltipGroup.add(tooltipTextBackground);
+        if (this.blobData !== null) {
+            const tooltipTextBackground = new window.Konva.Rect({
+                fill: "rgba(255, 255, 255, 0.75)", 
+                width: textElementsMaxWidth,
+                height: textElementsHeight, 
+                cornerRadius: 5,
+                y: this.tooltipSize.height,
+                x: textElementsMaxWidth > this.tooltipSize.width ? 0 - (maxWidthDiff / 2) : 0
+            });
+            this.tooltipGroup.add(tooltipTextBackground);
+        }
+        else {
+            this.tooltipGroup.children[0].width(this.tooltipSize.width);
+            this.tooltipGroup.children[0].height(textElementsHeight);
+            this.tooltipSize.height = textElementsHeight; // update tooltip size for positioning
+            textElements.forEach((text) => {
+                text.width(this.tooltipSize.width);
+            });
+        }
         textElements.forEach((text) => {
             this.tooltipGroup.add(text);
         });
@@ -136,7 +154,7 @@ class Tooltip extends TooltipSize {
         if (showGrammage === true && this.getShapeGrammage() !== null) {
             labelText.push(this.getShapeGrammage());
         }
-        if (this.blobData.moreBlobs === true) {
+        if (this.blobData !== null && this.blobData.moreBlobs === true) {
             labelText.push("Więcej niż 1 wzorzec!");
         }
         if (!attributes) {
@@ -171,6 +189,14 @@ class Tooltip extends TooltipSize {
                 this.tooltipSize.height + (i * konvaTextArr[i].height())
             );
             textElementsHeight += konvaTextArr[i].height();
+            // when no blob data is present, adjust tooltip size to the text size
+            if (this.blobData === null) {
+                if (konvaTextArr[i].width() > this.tooltipSize.width) {
+                    this.tooltipSize.width = konvaTextArr[i].width() + 10;
+                }
+                continue;
+            }
+            // adjusting text dimensions according to the tooltip size
             if (konvaTextArr[i].width() < this.tooltipSize.width) {
                 konvaTextArr[i].width(this.tooltipSize.width);
             }

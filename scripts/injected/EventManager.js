@@ -316,7 +316,7 @@ class EventManager {
             period = Number(periodInSettings);
         }
         return new Promise((resolve) => {
-            if (this.session.getFuncsUserSetting("showTTip") === false || period > 9 || i > 9) {
+            if (period > 9 || i > 9) {
                 resolve(false);
                 return;
             }
