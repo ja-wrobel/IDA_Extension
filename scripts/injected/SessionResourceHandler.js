@@ -7,6 +7,7 @@ class SessionResourceHandler extends CryptoManager {
         this.userSettings = {};
         this.knownClassBlobs = {};
         this.lastInterceptedBlob = null;
+        this.tokenRetrieved = false;
     }
         
     setUserSettings(settings) {
@@ -61,6 +62,7 @@ class SessionResourceHandler extends CryptoManager {
             try {
                 const decryptedToken = await this.decryptData(token);
                 this.authToken = decryptedToken;
+                this.tokenRetrieved = true;
             } catch (error) {
                 console.error("Error decrypting token:", error);
             }
@@ -114,10 +116,25 @@ class SessionResourceHandler extends CryptoManager {
         });
     }
 
-    refreshAuthToken() {
-        this.fetchWithRetry(`${document.location.origin}/api/tokens/refresh_token`, this.getHeadersForMethod("POST"))
-            .then((response) => response.headers)
-            .then((headers) => this.setAuthToken(headers.get("Authorization"), false));
+    async waitForTokenRetrieval(i = 0) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                if (this.tokenRetrieved === true || (typeof this.authToken === "string" && this.authToken.length > 1) || i >= 20) {
+                    this.tokenRetrieved = true;
+                    resolve();
+                } else {
+                    resolve(this.waitForTokenRetrieval(i + 1));
+                }
+            }, 50);
+        });
+    }
+
+    async refreshAuthToken() {
+        this.waitForTokenRetrieval().then(() => {
+            this.fetchWithRetry(`${document.location.origin}/api/tokens/refresh_token`, this.getHeadersForMethod("POST"))
+                .then((response) => response.headers)
+                .then((headers) => this.setAuthToken(headers.get("Authorization"), false));
+        });
     }
 
     waitForResources(annotations, i = 0) {
