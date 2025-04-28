@@ -183,6 +183,10 @@ import { EventListeners } from "./EventListeners.js";
                 if (document.activeElement.nodeName === "INPUT") { 
                     return;
                 }
+                if (session.getFuncsUserSetting("restorePreviousInputValue") && e.key === "Backspace") {
+                    eventManager.searchFor(eventManager.getLastInputValue(true), false, false);
+                    return;
+                }
                 eventManager.handleKeyPress(e); // in keydown bcs it's more convenient in use for keyboard shortucts with alt
             });
 

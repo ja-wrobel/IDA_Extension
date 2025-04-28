@@ -202,7 +202,6 @@ class SettingsStore {
             return;
         }
         const { key, alt } = setting;
-        console.log(setting);
         if (
             (typeof key === "string" && key.length <= 1) || 
             (typeof key === "number" && key > 0 && key < 31)

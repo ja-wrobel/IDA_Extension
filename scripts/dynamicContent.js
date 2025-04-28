@@ -170,6 +170,15 @@ const dynamicContent = {
             <label class="setting-label" for="show-warnings-on-group-delete">Potwierdzaj usunięcie grupy</label>
             <input class="setting-checkbox" name="showWarningOnGroupDelete" type="checkbox" id="show-warnings-on-group-delete">
         </div>
+        <div class="setting">
+            <label
+                class="setting-label text-left" 
+                for="restore-prev"
+            >
+                Przywracaj poprzednią treść wyszukiwania pod "Backspace"
+            </label>
+            <input class="setting-checkbox" name="restorePreviousInputValue" type="checkbox" id="restore-prev">
+        </div>
     `
 };
 

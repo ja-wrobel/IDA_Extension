@@ -5,6 +5,7 @@ class EventManager {
     rightAlt = false;
     lastSelectedClass = null;
     isKeyPressed = false;
+    inputHistory = [];
 
     /** @param {SessionResourceHandler} sessionInstance  */
     constructor(sessionInstance, imageGroup, shapeLayer) {
@@ -273,8 +274,31 @@ class EventManager {
         input.dispatchEvent(new Event("input", { bubbles: true }));
     }
 
-    searchFor(string, keepFocus) {
+    getLastInputValue(shouldRemove = false) {
+        if (this.inputHistory.length === 0) {
+            return "...";
+        }
+        if (shouldRemove === true) {
+            return this.inputHistory.shift();
+        }
+        return this.inputHistory[0];
+    }
+
+    savePreviousInputValue(val) {
+        if (this.inputHistory.length === 5) {
+            this.inputHistory.pop();
+            this.inputHistory.unshift(val);
+        } 
+        else {
+            this.inputHistory.unshift(val);
+        }
+    }
+
+    searchFor(string, keepFocus, savePreviousValue = true) {
         const input = document.querySelector("input");
+        if (savePreviousValue === true) {
+            this.savePreviousInputValue(input.value);
+        }
         if (string.slice(0, 3) === "...") {
             input.value = input.value + string.slice(3);
         } else {

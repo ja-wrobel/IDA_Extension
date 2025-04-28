@@ -34,7 +34,8 @@ const InitialSettings = {
         showGrammage: true,
         informWhenMoreBlobs: true,
         preventDefault: true,
-        showWarningOnGroupDelete: true
+        showWarningOnGroupDelete: true,
+        restorePreviousInputValue: true
     },
     reservedKeys: ['z', 'v', 'n', 'a', 's', 'd', 'i', 'm', 'u', 'f'],
     duplicates: [
