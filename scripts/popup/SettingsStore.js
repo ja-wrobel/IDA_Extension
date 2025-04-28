@@ -194,7 +194,7 @@ class SettingsStore {
     /** 
      * @param {string} name 
      * @param {object} [setting={}] 
-     * @param {string} [setting.key]
+     * @param {string|number} [setting.key]
      * @param {boolean} [setting.alt]
      */
     _setMainSetting(name, setting = {}) {
@@ -202,7 +202,11 @@ class SettingsStore {
             return;
         }
         const { key, alt } = setting;
-        if (typeof key === "string" && (key.length <= 1 || name === "tooltipSize")) {
+        console.log(setting);
+        if (
+            (typeof key === "string" && key.length <= 1) || 
+            (typeof key === "number" && key > 0 && key < 31)
+        ) {
             this.userSettings._main[name].key = key;
         }
         if (typeof alt === "boolean") {

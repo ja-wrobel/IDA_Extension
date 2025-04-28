@@ -37,7 +37,6 @@ class Renders {
         document.querySelectorAll(".setting-checkbox").forEach(checkbox => {
             checkbox.checked = this.settings._getMainSettings(checkbox.name).alt;
         });
-        document.getElementById(this.settings._getMainSettings("tooltipSize").key).classList.add("selected");
     }
 
     updateCustomDOM() {

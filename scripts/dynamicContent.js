@@ -76,12 +76,14 @@ const dynamicContent = {
             </label>
         </div>
         <div class="setting flex-col">
-            <p class="setting-title">Wybierz rozmiar wzorców</p>
-            <div class="flex-row">
-                <button type="button" class="manage-btn wide-btn" name="tooltipSize" id="small">Małe</button>
-                <button type="button" class="manage-btn wide-btn" name="tooltipSize" id="medium">Średnie</button>
-                <button type="button" class="manage-btn wide-btn" name="tooltipSize" id="big">Duże</button>
-            </div>
+            <p class="setting-title">Ustaw rozmiar wzorców</p>
+            <input class="setting-inp-key" 
+                style="width: 45px;" 
+                name="tooltipSize" 
+                id="tooltip-size" 
+                type="number" 
+                title="Dopuszczalne są wartości w zakresie od 1 do 30"
+            >
         </div>
     `,
     _custom: `

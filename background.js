@@ -13,7 +13,7 @@ const InitialSettings = {
         visiblity: {key: "x", alt: false},
         ettiq: {key: "c", alt: false},
         displayTTipPeriod: {key: "0"},
-        tooltipSize: {key: "medium"}
+        tooltipSize: {key: 18}
     },
     _custom: [
         {

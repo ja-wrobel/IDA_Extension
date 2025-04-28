@@ -35,10 +35,19 @@ class EventManager extends EventManagerHandlers {
         this.addEventListeners(".setting-inp-key", "change", (e) => {
             if (e.target.name === "displayTTipPeriod") {
                 if (isNaN(e.target.value) === true) {
-                    e.target.value = this.settings._getMainSettings()[e.target.name].key;
+                    e.target.value = this.settings._getMainSettings(e.target.name).key;
                     return;
                 }
                 this.settings._setMainSetting(e.target.name, {key: e.target.value});
+                return;
+            }
+            if (e.target.name === "tooltipSize") {
+                const val = Number(e.target.value);
+                if (isNaN(val) === true || val < 1 || val > 30) {
+                    e.target.value = this.settings._getMainSettings(e.target.name).key;
+                    return;
+                }
+                this.settings._setMainSetting(e.target.name, {key: val});
                 return;
             }
             this.handleInputKeyChange(
@@ -46,19 +55,16 @@ class EventManager extends EventManagerHandlers {
                 this.settings._getMainSettings(e.target.name)
             )
         }, signal);
-        this.addEventListeners(".setting-inp-key", "click", (e) => e.target.select(), signal);
+        this.addEventListeners(".setting-inp-key", "click", (e) => {
+            if (e.target.name === "tooltipSize") return;
+            e.target.select();
+        }, signal);
 
         this.addEventListeners(".setting-checkbox", "click", (e) => {
             this.handleCheckboxClick(
                 e, 
                 this.settings._getMainSettings(e.target.name)
             )
-        }, signal);
-        this.addEventListeners(`[name="tooltipSize"]`, "click", (e) => {
-            const previousSize = document.querySelector(".manage-btn.selected");
-            previousSize.classList.remove("selected");
-            e.target.classList.add("selected");
-            this.settings._setMainSetting(e.target.name, {key: e.target.id});
         }, signal);
     }
 

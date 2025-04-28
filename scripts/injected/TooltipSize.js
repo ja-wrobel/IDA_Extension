@@ -26,32 +26,23 @@ class TooltipSize extends KonvaMaths {
     }
 
     isTooltipSizeSettingValid(settingVal) {
-        if (settingVal === "small" || settingVal === "medium" || settingVal === "big") {
+        if (settingVal > 0 && settingVal <= 30) {
             return true;
         }
         return false;
     }
 
     getMinimumSizeAccToSettings() {
-        switch(this.tooltipSizeSetting) {
-            case "small":
-                return 160;
-            case "big":
-                return 210;
-            default:
-                return 180;
-        }
+        const calculatedBase = this.tooltipSizeSetting * 10;
+        return calculatedBase;
     }
 
     getScalingBaseAccToSettings() {
-        switch(this.tooltipSizeSetting) {
-            case "small":
-                return 0.8;
-            case "big":
-                return 0.55;
-            default:
-                return 0.65;
-        }
+        const tooltipSizeValDecShiftedToLeft = this.tooltipSizeSetting / 10;
+        const reducedTooltipSizeVal = this.tooltipSizeSetting - tooltipSizeValDecShiftedToLeft;
+        const modifier = reducedTooltipSizeVal * reducedTooltipSizeVal;
+        const scalingBase = this.getMinimumSizeAccToSettings() / modifier;
+        return scalingBase;
     }
 
     getBaseTooltipSize(dimension) {

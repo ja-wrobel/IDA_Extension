@@ -119,7 +119,8 @@ button {
         user-select: none;
     }
     
-    & input[type="text"] {
+    & input[type="text"],
+    input[type="number"] {
         color:rgb(220, 220, 220);
         background-color: rgba(227, 227, 227, 0.2);
         padding: 3px;
@@ -178,7 +179,8 @@ button {
 
     & .setting-checkbox:hover,
     .setting-checkbox:focus-visible,
-    input[type="text"]:hover,
+    .setting-inp-key:hover,
+    .setting-inp-val:hover,
     .manage-btn.selected {
         box-shadow: 0 0 7px 1px var(--checkbox-color);
     }
