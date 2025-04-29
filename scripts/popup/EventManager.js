@@ -32,7 +32,15 @@ class EventManager extends EventManagerHandlers {
     }
 
     addMainEvents(signal) {
-        this.addEventListeners(".setting-inp-key", "change", (e) => {
+        this.addEventListeners(".setting-inp-key", "keydown", (e) => {
+            if (e.key !== "Backspace") {
+                e.preventDefault();
+            }
+        }, signal);
+        this.addEventListeners(".setting-inp-key", "keyup", (e) => {
+            if (e.key !== "Backspace") {
+                e.preventDefault();
+            }
             if (e.target.name === "displayTTipPeriod") {
                 if (isNaN(e.target.value) === true) {
                     e.target.value = this.settings._getMainSettings(e.target.name).key;
@@ -79,7 +87,15 @@ class EventManager extends EventManagerHandlers {
             }
         }, signal);
 
-        this.addEventListeners(".setting-inp-key", "change", (e) => {
+        this.addEventListeners(".setting-inp-key", "keydown", (e) => {
+            if (e.key !== "Backspace") {
+                e.preventDefault();
+            }
+        }, signal);
+        this.addEventListeners(".setting-inp-key", "keyup", (e) => {
+            if (e.key !== "Backspace") {
+                e.preventDefault();
+            }
             if (this.settings.isValidProject === true) {
                 const attributeName = e.target.getAttribute("data-name");
                 this.handleInputKeyChange(
@@ -195,7 +211,15 @@ class EventManager extends EventManagerHandlers {
             this.settings._setSelectedGroupData(id, {value: e.target.value});
         }, signal);
 
-        this.addEventListeners(".setting-inp-key", "change", (e) => {
+        this.addEventListeners(".setting-inp-key", "keydown", (e) => {
+            if (e.key !== "Backspace") {
+                e.preventDefault();
+            }
+        }, signal);
+        this.addEventListeners(".setting-inp-key", "keyup", (e) => {
+            if (e.key !== "Backspace") {
+                e.preventDefault();
+            }
             const id = e.target.getAttribute("data-index");
             this.handleInputKeyChange(
                 e, 

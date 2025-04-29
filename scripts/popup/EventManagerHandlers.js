@@ -5,7 +5,10 @@ class EventManagerHandlers {
     }
     
     handleInputKeyChange(e, targetSetting) {
-        const newValCode = this.isKeyAvailable(e.target.value, targetSetting.alt);
+        if (e.key === targetSetting.key) {
+            return;
+        }
+        const newValCode = this.isKeyAvailable(e.key, targetSetting.alt);
         const oldValCode = this.isKeyAvailable(targetSetting.key, targetSetting.alt, {onlyReturnCode: true});
         if (newValCode === 0) {
             e.target.value = targetSetting.key;
@@ -14,7 +17,17 @@ class EventManagerHandlers {
         if (oldValCode === 1) {
             this.settings.removeDuplicatedShortcut(targetSetting.key, targetSetting.alt);
         }
-        targetSetting.key = e.target.value;
+        if (e.key === "Backspace") {
+            targetSetting.key = "";
+            e.target.value = "";
+            e.target.title = "";
+            this.settings.saveData();
+            this.renders.highlightDuplicatedKeys();
+            return;
+        }
+        targetSetting.key = e.key;
+        e.target.value = e.key;
+        e.target.title = e.key;
         this.settings.saveData();
         this.renders.highlightDuplicatedKeys();
     }

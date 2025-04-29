@@ -53,8 +53,7 @@ class SettingsStore {
             setting === null ||
             typeof setting.alt !== "boolean" ||
             typeof setting.key !== "string" ||
-            typeof setting.value !== "string" ||
-            setting.key.length > 1
+            typeof setting.value !== "string"
         ) {
             return false;
         }
@@ -110,7 +109,7 @@ class SettingsStore {
             this.saveData();
             return;
         }
-        if (typeof key === "string" && key.length <= 1) {
+        if (typeof key === "string") {
             this.userSettings._custom[this._getSelectedGroupId()].data[index].key = key;
         }
         if (typeof value === "string") {
@@ -172,7 +171,7 @@ class SettingsStore {
             return;
         }
         const { key, value, alt } = setting;
-        if (typeof key === "string" && key.length <= 1) {
+        if (typeof key === "string") {
             this.userSettings._attrs[this.currentProjectName][attributeName].key = key;
         }
         if (typeof value === "string") {
@@ -203,7 +202,7 @@ class SettingsStore {
         }
         const { key, alt } = setting;
         if (
-            (typeof key === "string" && key.length <= 1) || 
+            (typeof key === "string") || 
             (typeof key === "number" && key > 0 && key < 31)
         ) {
             this.userSettings._main[name].key = key;

@@ -37,7 +37,7 @@ const InitialSettings = {
         showWarningOnGroupDelete: true,
         restorePreviousInputValue: true
     },
-    reservedKeys: ['z', 'v', 'n', 'a', 's', 'd', 'i', 'm', 'u', 'f'],
+    reservedKeys: ['z', 'v', 'n', 'a', 's', 'd', 'i', 'm', 'u', 'f', "Control", "Alt", "AltGraph", "Shift"],
     duplicates: [
         {
             defaults: []

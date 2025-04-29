@@ -135,7 +135,7 @@ button {
     }
 
     & .setting-inp-key {
-        width: 15px;
+        width: 30px;
         font-weight: bold;
         font-size: 1em;
         text-transform: uppercase;

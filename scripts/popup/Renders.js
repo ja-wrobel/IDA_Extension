@@ -20,6 +20,7 @@ class Renders {
                 break;
         }
         document.querySelectorAll(".setting-inp-key").forEach( input => {
+            input.title = input.value;
             const siblingCheckbox = this.getSiblingCheckbox(input);
             if (siblingCheckbox === null) {
                 return;
